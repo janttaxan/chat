@@ -1,0 +1,7 @@
+.root {}
+
+.textField {
+  resize: none;
+  /*overflow-y: hidden;*/
+  max-height: 200px;
+}
