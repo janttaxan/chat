@@ -39,7 +39,7 @@ export const userSlice = createSlice({
       state.username = username;
       state.isAuth = true;
     },
-    clearUserData(state: UserSliceState) {
+    signout(state: UserSliceState) {
       state.token = null;
       state.username = null;
       state.isAuth = false;
@@ -77,4 +77,4 @@ export const userSlice = createSlice({
 });
 
 export const selectUser = (state: ReduxState) => state.user;
-export const { setUserData, clearUserData } = userSlice.actions;
+export const { setUserData, signout } = userSlice.actions;

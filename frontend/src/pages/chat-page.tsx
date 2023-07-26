@@ -71,7 +71,7 @@ export function ChatPage() {
       <>
         <h3>Chat Page</h3>
         <div>chat page</div>
-        <Channels />
+        <Channels chatSocket={chatSocket} />
         <Messages chatSocket={chatSocket} />
       </>
     </Layout>

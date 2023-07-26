@@ -1,6 +1,11 @@
 import { useCallback } from 'react';
 
-import { clearUserData, signin as signinThunk, signup as signupThunk, selectUser } from 'core/redux/slices/user-slice';
+import {
+  signout as signoutAction,
+  signin as signinThunk,
+  signup as signupThunk,
+  selectUser
+} from 'core/redux/slices/user-slice';
 import { useDispatch, useSelector } from 'core/redux/store';
 
 type UserData = { username: string; password: string };
@@ -24,7 +29,7 @@ export const useAuth = () => {
   );
 
   const signout = useCallback(() => {
-    dispatch(clearUserData());
+    dispatch(signoutAction());
   }, [dispatch]);
 
   return { user, signin, signup, signout };

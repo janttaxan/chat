@@ -1,7 +1,7 @@
 import styles from './messages.module.css';
 
 import { ChatSocketHook } from 'core/hooks/chat-socket';
-import { messagesSelectors } from 'core/redux/slices/messages-slice';
+import { selectCurrentChannelMessages } from 'core/redux/slices/messages-slice';
 import { useSelector } from 'core/redux/store';
 
 import { MessageForm } from 'components/messages/message-form/message-form';
@@ -11,7 +11,7 @@ interface MessagesProps {
 }
 
 export const Messages = ({ chatSocket }: MessagesProps) => {
-  const messages = useSelector(messagesSelectors.selectAll);
+  const messages = useSelector(selectCurrentChannelMessages);
 
   return (
     <div className={styles.root}>
