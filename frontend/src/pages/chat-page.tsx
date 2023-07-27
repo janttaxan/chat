@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { normalize, schema } from 'normalizr';
 import { useEffect } from 'react';
+import { Col, Container, Row } from 'react-bootstrap';
 
 import { Layout } from 'components/layout/layout';
 
@@ -68,12 +69,16 @@ export function ChatPage() {
 
   return (
     <Layout>
-      <>
-        <h3>Chat Page</h3>
-        <div>chat page</div>
-        <Channels chatSocket={chatSocket} />
-        <Messages chatSocket={chatSocket} />
-      </>
+      <Container>
+        <Row>
+          <Col sm={12} md={4}>
+            <Channels chatSocket={chatSocket} />
+          </Col>
+          <Col sm={12} md={8}>
+            <Messages chatSocket={chatSocket} />
+          </Col>
+        </Row>
+      </Container>
     </Layout>
   );
 }

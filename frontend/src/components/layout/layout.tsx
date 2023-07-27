@@ -9,7 +9,7 @@ interface LayoutProps {
 
 export function Layout(props: LayoutProps) {
   return (
-    <Container as='section'>
+    <Container as='section' fluid>
       <Row>
         <Col>
           <Header />
