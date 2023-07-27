@@ -1,8 +1,7 @@
-import styles from './layout.module.css';
-
 import React from 'react';
 
 import { Header } from 'components/layout/header';
+import { Col, Container, Row } from 'react-bootstrap';
 
 interface LayoutProps {
   children: React.ReactNode;
@@ -10,12 +9,17 @@ interface LayoutProps {
 
 export function Layout(props: LayoutProps) {
   return (
-    <section className={styles.container}>
-      <Header />
-
-      <main className={styles.main}>{props.children}</main>
-
-      <footer className={styles.footer}>footer</footer>
-    </section>
+    <Container as='section'>
+      <Row>
+        <Col>
+          <Header />
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <main>{props.children}</main>
+        </Col>
+      </Row>
+    </Container>
   );
 }

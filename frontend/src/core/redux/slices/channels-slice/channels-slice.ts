@@ -21,11 +21,12 @@ export const channelsSlice = createSlice({
     channelAdd: (state, action: PayloadAction<Channel>) => {
       const newChannel = action.payload;
       channelsAdapter.addOne(state, newChannel);
-      state.currentChannelId = newChannel.id;
     },
     channelRemove: (state, action: PayloadAction<number>) => {
       channelsAdapter.removeOne(state, action.payload);
-      state.currentChannelId = GENERAL_CHANNEL_ID;
+      if (state.currentChannelId === action.payload) {
+        state.currentChannelId = GENERAL_CHANNEL_ID;
+      }
     },
     channelUpdate: channelsAdapter.updateOne,
     setChannels: channelsAdapter.upsertMany,
