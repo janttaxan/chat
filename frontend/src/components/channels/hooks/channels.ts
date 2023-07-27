@@ -4,6 +4,7 @@ import { Channel } from 'core/entities';
 import { ChatSocketHook } from 'core/hooks/chat-socket';
 import { channelsSelectors, selectCurrentChannelId, setCurrentChannelId } from 'core/redux/slices/channels-slice';
 import { useDispatch, useSelector } from 'core/redux/store';
+import { useNotification } from 'core/hooks/notification';
 
 export enum WizardMode {
   add,
@@ -15,6 +16,7 @@ export const useChannels = (chatSocket: ChatSocketHook) => {
   const dispatch = useDispatch();
   const channels = useSelector(channelsSelectors.selectAll);
   const currentChannelId = useSelector(selectCurrentChannelId);
+  const { success, info } = useNotification();
 
   const [mode, setMode] = useState<Optional<WizardMode>>(null);
   const [workingChannel, setWorkingChannel] = useState<Optional<Channel>>(null);
@@ -41,25 +43,28 @@ export const useChannels = (chatSocket: ChatSocketHook) => {
   const addChannel = useCallback(
     (name: string) => {
       chatSocket.createChannel(name);
+      success(`Канал добавлен: ${name}`);
       closeModal();
     },
-    [chatSocket, closeModal]
+    [chatSocket, closeModal, success]
   );
 
   const removeChannel = useCallback(
-    (channelId: number) => {
-      chatSocket.removeChannel(channelId);
+    (channel: Channel) => {
+      chatSocket.removeChannel(channel.id);
+      info(`Канал удален: ${channel.name}`);
       closeModal();
     },
-    [chatSocket, closeModal]
+    [chatSocket, closeModal, info]
   );
 
   const renameChannel = useCallback(
     (channelId: number, newName: string) => {
       chatSocket.renameChannel(channelId, newName);
+      info(`Новое имя канала: ${newName}`);
       closeModal();
     },
-    [chatSocket, closeModal]
+    [chatSocket, closeModal, info]
   );
 
   return {

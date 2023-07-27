@@ -7,13 +7,13 @@ interface RemoveChannelModalProps {
   show: boolean;
   workingChannel: Optional<Channel>;
   onClose: () => void;
-  onRemove: (id: number) => void;
+  onRemove: (channel: Channel) => void;
 }
 
 export const RemoveChannelModal = (props: RemoveChannelModalProps) => {
   const handleSubmit = useCallback(() => {
     if (props.workingChannel) {
-      props.onRemove(props.workingChannel.id);
+      props.onRemove(props.workingChannel);
     }
   }, [props]);
 

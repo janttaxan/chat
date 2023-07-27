@@ -6,12 +6,21 @@ import { channelAdd, channelRemove, channelUpdate, selectCurrentChannelId } from
 import { selectUser } from 'core/redux/slices/user-slice';
 import { messageAdd } from 'core/redux/slices/messages-slice';
 import { useDispatch, useSelector } from 'core/redux/store';
+import { useNotification } from 'core/hooks/notification';
+
+const ChatEvents = {
+  newMessage: 'newMessage',
+  newChannel: 'newChannel',
+  removeChannel: 'removeChannel',
+  renameChannel: 'renameChannel'
+} as const;
 
 export const useChatSocket = () => {
   const [socket, setSocket] = useState<Optional<Socket>>(null);
   const dispatch = useDispatch();
   const user = useSelector(selectUser);
   const currentChannelId = useSelector(selectCurrentChannelId);
+  const { success, info, error } = useNotification();
 
   const messageListener = useCallback(
     (payload: Message) => {
@@ -42,11 +51,16 @@ export const useChatSocket = () => {
   );
 
   const connectListener = useCallback(() => {
-    console.log('======================= socket CONNECTED');
-  }, []);
+    success('Соеденение установлено!');
+  }, [success]);
+
   const disconnectListener = useCallback(() => {
-    console.log('======================= socket DISCONNECTED');
-  }, []);
+    info('Соеденение закрыто.');
+  }, [info]);
+
+  const errorListener = useCallback(() => {
+    error('Соеденение потеряно. Попробуйте обновить страницу.');
+  }, [error]);
 
   useEffect(() => {
     const newSocket = io('/');
@@ -59,24 +73,27 @@ export const useChatSocket = () => {
     }
     socket.on('connect', connectListener);
     socket.on('disconnect', disconnectListener);
-    socket.on('newMessage', messageListener);
-    socket.on('newChannel', addChannelListener);
-    socket.on('removeChannel', removeChannelListener);
-    socket.on('renameChannel', renameChannelListener);
+    socket.on('connect_error', errorListener);
+    socket.on(ChatEvents.newMessage, messageListener);
+    socket.on(ChatEvents.newChannel, addChannelListener);
+    socket.on(ChatEvents.removeChannel, removeChannelListener);
+    socket.on(ChatEvents.renameChannel, renameChannelListener);
 
     return () => {
       socket.close();
-      socket.on('connect', connectListener);
-      socket.on('disconnect', disconnectListener);
-      socket.off('newMessage', messageListener);
-      socket.off('newChannel', addChannelListener);
-      socket.off('removeChannel', removeChannelListener);
-      socket.off('renameChannel', renameChannelListener);
+      socket.off('connect', connectListener);
+      socket.off('disconnect', disconnectListener);
+      socket.off('connect_error', errorListener);
+      socket.off(ChatEvents.newMessage, messageListener);
+      socket.off(ChatEvents.newChannel, addChannelListener);
+      socket.off(ChatEvents.removeChannel, removeChannelListener);
+      socket.off(ChatEvents.renameChannel, renameChannelListener);
     };
   }, [
     addChannelListener,
     connectListener,
     disconnectListener,
+    errorListener,
     messageListener,
     removeChannelListener,
     renameChannelListener,
@@ -88,7 +105,7 @@ export const useChatSocket = () => {
       if (!socket) {
         return;
       }
-      socket.emit('newMessage', { body, channelId: currentChannelId, username: user.username });
+      socket.emit(ChatEvents.newMessage, { body, channelId: currentChannelId, username: user.username });
     },
     [currentChannelId, socket, user.username]
   );
@@ -98,7 +115,7 @@ export const useChatSocket = () => {
       if (!socket) {
         return;
       }
-      socket.emit('newChannel', { name });
+      socket.emit(ChatEvents.newChannel, { name });
     },
     [socket]
   );
@@ -108,7 +125,7 @@ export const useChatSocket = () => {
       if (!socket) {
         return;
       }
-      socket.emit('removeChannel', { id });
+      socket.emit(ChatEvents.removeChannel, { id });
     },
     [socket]
   );
@@ -118,7 +135,7 @@ export const useChatSocket = () => {
       if (!socket) {
         return;
       }
-      socket.emit('renameChannel', { id, name });
+      socket.emit(ChatEvents.renameChannel, { id, name });
     },
     [socket]
   );
